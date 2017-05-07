@@ -300,67 +300,78 @@ public class CodeWriter {
 			_bw.write("// FRAME = LCL\n");
 			_bw.write("@LCL\n");
 			_bw.write("D=M\n");
-			_bw.write("@FRAME\n");
+			_bw.write("@R13\n"); // Use R13 to represent FRAME
 			_bw.write("M=D\n");
 
 			_bw.write("// RET = *(FRAME-5)\n");
-			_bw.write("@FRAME\n");
+			_bw.write("@R13\n");
 			_bw.write("D=M\n");
 			_bw.write("@5\n");
 			_bw.write("D=D-A\n");
-			_bw.write("@RET\n");
+			_bw.write("@R14\n"); // Use R14 to represent RET
 			_bw.write("M=D\n");
 
-			_bw.write("// ARG = pop()\n");
+			_bw.write("// *ARG = pop()\n");
 			_bw.write("@SP\n");
 			_bw.write("M=M-1\n");
-			_bw.write("@SP\n");
+			_bw.write("A=M\n");
 			_bw.write("D=M\n");
 			_bw.write("@ARG\n");
+			_bw.write("A=M\n");
 			_bw.write("M=D\n");
 			
 			_bw.write("// SP = ARG + 1\n");
 			_bw.write("@ARG\n");
-			_bw.write("D=A\n");
+			_bw.write("D=M\n");
 			_bw.write("@1\n");
-			_bw.write("D=A+1\n");
+			_bw.write("D=D+A\n");
 			_bw.write("@SP\n");
+			_bw.write("A=M\n");
 			_bw.write("M=D\n");
 
 			_bw.write("// THAT = *(FRAME-1)\n");
-			_bw.write("@FRAME\n");
+			_bw.write("@R13\n");
+			_bw.write("A=M\n");
 			_bw.write("D=M\n");
 			_bw.write("@1\n");
 			_bw.write("D=D-A\n");
 			_bw.write("@THAT\n");
+			_bw.write("A=M\n");
 			_bw.write("M=D\n");
 
 			_bw.write("// THIS = *(FRAME-2)\n");
-			_bw.write("@FRAME\n");
+			_bw.write("@R13\n");
+			_bw.write("A=M\n");
 			_bw.write("D=M\n");
 			_bw.write("@2\n");
 			_bw.write("D=D-A\n");
 			_bw.write("@THIS\n");
+			_bw.write("A=M\n");
 			_bw.write("M=D\n");
 
 			_bw.write("// ARG = *(FRAME-3)\n");
-			_bw.write("@FRAME\n");
+			_bw.write("@R13\n");
+			_bw.write("A=M\n");
 			_bw.write("D=M\n");
 			_bw.write("@3\n");
 			_bw.write("D=D-A\n");
 			_bw.write("@ARG\n");
+			_bw.write("A=M\n");
 			_bw.write("M=D\n");
 
 			_bw.write("// LCL = *(FRAME-4)\n");
-			_bw.write("@FRAME\n");
+			_bw.write("@R13\n");
+			_bw.write("A=M\n");
 			_bw.write("D=M\n");
 			_bw.write("@4\n");
 			_bw.write("D=D-A\n");
 			_bw.write("@LCL\n");
+			_bw.write("A=M\n");
 			_bw.write("M=D\n");
 
 			_bw.write("// goto RET\n");
-			_bw.write("@RET\n");
+			_bw.write("@R14\n");
+			_bw.write("A=M\n");
 			_bw.write("0;JMP\n");
 		}
 		catch (IOException ioe) {

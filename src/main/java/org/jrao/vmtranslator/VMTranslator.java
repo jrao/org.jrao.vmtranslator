@@ -62,6 +62,11 @@ public class VMTranslator {
 			writer = new CodeWriter(new File(outputFilePath));
         }
 
+        /*
+         * Bootstrap assembly code must come  first (before any of the other files are translated)
+         */
+        writer.writeBootstrap();
+
         for (File vmFile : vmFiles) {
 			Parser parser = new Parser(vmFile);
 

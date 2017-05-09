@@ -307,7 +307,8 @@ public class CodeWriter {
 			_bw.write("@R13\n");
 			_bw.write("D=M\n");
 			_bw.write("@5\n");
-			_bw.write("D=D-A\n");
+			_bw.write("A=D-A\n");
+			_bw.write("D=M\n");
 			_bw.write("@R14\n"); // Use R14 to represent RET
 			_bw.write("M=D\n");
 
@@ -326,47 +327,42 @@ public class CodeWriter {
 			_bw.write("@1\n");
 			_bw.write("D=D+A\n");
 			_bw.write("@SP\n");
-			_bw.write("A=M\n");
 			_bw.write("M=D\n");
 
 			_bw.write("// THAT = *(FRAME-1)\n");
 			_bw.write("@R13\n");
-			_bw.write("A=M\n");
 			_bw.write("D=M\n");
 			_bw.write("@1\n");
-			_bw.write("D=D-A\n");
+			_bw.write("A=D-A\n");
+			_bw.write("D=M\n");
 			_bw.write("@THAT\n");
-			_bw.write("A=M\n");
 			_bw.write("M=D\n");
 
 			_bw.write("// THIS = *(FRAME-2)\n");
 			_bw.write("@R13\n");
-			_bw.write("A=M\n");
 			_bw.write("D=M\n");
 			_bw.write("@2\n");
-			_bw.write("D=D-A\n");
+			_bw.write("A=D-A\n");
+			_bw.write("D=M\n");
 			_bw.write("@THIS\n");
-			_bw.write("A=M\n");
 			_bw.write("M=D\n");
 
 			_bw.write("// ARG = *(FRAME-3)\n");
 			_bw.write("@R13\n");
-			_bw.write("A=M\n");
 			_bw.write("D=M\n");
 			_bw.write("@3\n");
-			_bw.write("D=D-A\n");
+			_bw.write("A=D-A\n");
+			_bw.write("D=M\n");
 			_bw.write("@ARG\n");
-			_bw.write("A=M\n");
 			_bw.write("M=D\n");
 
 			_bw.write("// LCL = *(FRAME-4)\n");
 			_bw.write("@R13\n");
-			_bw.write("A=M\n");
 			_bw.write("D=M\n");
 			_bw.write("@4\n");
-			_bw.write("D=D-A\n");
+			_bw.write("A=D-A\n");
+			_bw.write("D=M\n");
 			_bw.write("@LCL\n");
-			_bw.write("A=M\n");
 			_bw.write("M=D\n");
 
 			_bw.write("// goto RET\n");
@@ -383,6 +379,89 @@ public class CodeWriter {
 		// TODO: implement this method
 		try {
 			_bw.write("// call " + functionName + " " + numArgs + "\n");
+			_bw.write("// push return-address\n");
+			int retAddrLabelIndex = getCurrentRetAddrLabelIndex();
+			_bw.write(getRetAddrLabelAInstruction(retAddrLabelIndex) + "\n");
+			_bw.write("D=A\n");
+			_bw.write("@SP\n");
+			_bw.write("A=M\n");
+			_bw.write("M=D\n");
+			_bw.write("@SP\n");
+			_bw.write("M=M+1\n");
+			
+			_bw.write("// push LCL\n");
+			_bw.write("@LCL\n");
+			_bw.write("D=M\n");
+			_bw.write("@SP\n");
+			_bw.write("A=M\n");
+			_bw.write("M=D\n");
+			_bw.write("@SP\n");
+			_bw.write("M=M+1\n");
+
+			_bw.write("// push ARG\n");
+			_bw.write("@ARG\n");
+			_bw.write("D=M\n");
+			_bw.write("@SP\n");
+			_bw.write("A=M\n");
+			_bw.write("M=D\n");
+			_bw.write("@SP\n");
+			_bw.write("M=M+1\n");
+
+			_bw.write("// push THIS\n");
+			_bw.write("@THIS\n");
+			_bw.write("D=M\n");
+			_bw.write("@SP\n");
+			_bw.write("A=M\n");
+			_bw.write("M=D\n");
+			_bw.write("@SP\n");
+			_bw.write("M=M+1\n");
+
+			_bw.write("// push THAT\n");
+			_bw.write("@THAT\n");
+			_bw.write("D=M\n");
+			_bw.write("@SP\n");
+			_bw.write("A=M\n");
+			_bw.write("M=D\n");
+			_bw.write("@SP\n");
+			_bw.write("M=M+1\n");
+
+			_bw.write("// ARG = SP-n-5\n");
+			_bw.write("@SP\n");
+			_bw.write("D=M\n");
+			_bw.write("@" + numArgs + "\n");
+			_bw.write("D=D-M\n");
+			_bw.write("@5\n");
+			_bw.write("D=D-M\n");
+			_bw.write("@ARG\n");
+			_bw.write("M=D\n");
+
+			_bw.write("// LCL = SP\n");
+			_bw.write("@SP\n");
+			_bw.write("D=M\n");
+			_bw.write("@LCL\n");
+			_bw.write("M=D\n");
+
+			_bw.write("// goto " + functionName + "\n");
+			_bw.write("@" + functionName + "\n");
+			_bw.write("0;JMP\n");
+
+			_bw.write("// (return-address)\n");
+			_bw.write(getRetAddrLabelDeclaration(retAddrLabelIndex) + "\n");
+
+			incrementRetAddrLabel();
+		}
+		catch (IOException ioe) {
+			ioe.printStackTrace();
+		}
+	}
+	
+	public void writeBootstrap() {
+		try {
+			_bw.write("@256\n");
+			_bw.write("D=A\n");
+			_bw.write("@SP\n");
+			_bw.write("M=D\n");
+			writeCall("Sys.init", 0);
 		}
 		catch (IOException ioe) {
 			ioe.printStackTrace();
@@ -662,6 +741,22 @@ public class CodeWriter {
 	}
 	
 	private void incrementLabel() {
+		_labelIndex++;
+	}
+	
+	private int getCurrentRetAddrLabelIndex() {
+		return _labelIndex;
+	}
+	
+	private String getRetAddrLabelDeclaration(int labelIndex) {
+		return "(RETADDRLABEL" + Integer.toString(labelIndex) + ")";
+	}
+	
+	private String getRetAddrLabelAInstruction(int labelIndex) {
+		return "@RETADDRLABEL" + Integer.toString(labelIndex);
+	}
+	
+	private void incrementRetAddrLabel() {
 		_labelIndex++;
 	}
 	

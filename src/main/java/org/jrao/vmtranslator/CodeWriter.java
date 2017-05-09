@@ -380,6 +380,7 @@ public class CodeWriter {
 		try {
 			_bw.write("// call " + functionName + " " + numArgs + "\n");
 			_bw.write("// push return-address\n");
+			_bw.write("@7770\n"); 
 			int retAddrLabelIndex = getCurrentRetAddrLabelIndex();
 			_bw.write(getRetAddrLabelAInstruction(retAddrLabelIndex) + "\n");
 			_bw.write("D=A\n");
@@ -429,9 +430,9 @@ public class CodeWriter {
 			_bw.write("@SP\n");
 			_bw.write("D=M\n");
 			_bw.write("@" + numArgs + "\n");
-			_bw.write("D=D-M\n");
+			_bw.write("D=D-A\n");
 			_bw.write("@5\n");
-			_bw.write("D=D-M\n");
+			_bw.write("D=D-A\n");
 			_bw.write("@ARG\n");
 			_bw.write("M=D\n");
 
@@ -447,6 +448,7 @@ public class CodeWriter {
 
 			_bw.write("// (return-address)\n");
 			_bw.write(getRetAddrLabelDeclaration(retAddrLabelIndex) + "\n");
+			_bw.write("@7771\n"); 
 
 			incrementRetAddrLabel();
 		}

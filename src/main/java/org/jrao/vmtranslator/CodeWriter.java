@@ -23,20 +23,7 @@ public class CodeWriter {
 	}
 	
 	public void setFileName(String fileName) {
-		if (fileName.contains(".")) {
-			_fileName = fileName.substring(0, fileName.lastIndexOf("."));
-		}
-
-		try {
-			String currentPathString = Paths.get("").toAbsolutePath().toString();
-			String vmFilePathString = currentPathString + "/" + fileName;
-			File vmFile = new File(vmFilePathString);
-			_fw = new FileWriter(vmFile);
-			_bw = new BufferedWriter(_fw);
-		}
-		catch (IOException ioe) {
-			ioe.printStackTrace();
-		}
+		_fileName = fileName;
 	}
 	
 	public String getFileName() {

@@ -54,6 +54,7 @@ public class VMTranslator {
 			String asmFileName = vmFileName.substring(0, vmFileName.lastIndexOf(".vm")) + ".asm";
 			outputFilePath = vmFile.getParent() + "/" + asmFileName;
 			writer = new CodeWriter(new File(outputFilePath));
+			writer.setFileName(vmFileName);
         }
         // If there are multiple input .vm files, base the output .asm file's name on the input directory's name
         else if (vmFiles.size() > 1) {
@@ -68,6 +69,7 @@ public class VMTranslator {
         writer.writeBootstrap();
 
         for (File vmFile : vmFiles) {
+        	writer.setFileName(vmFile.getName());
 			Parser parser = new Parser(vmFile);
 
 			while (parser.hasMoreCommands()) {
